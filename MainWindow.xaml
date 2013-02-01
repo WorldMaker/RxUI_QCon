@@ -29,9 +29,9 @@
         <TextBox Text="{Binding Green}" Grid.Row="1" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" />
         <TextBox Text="{Binding Blue}" Grid.Row="2" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" />
 
-        <Border Background="{Binding FinalColor.Value}"  Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" Width="128" Height="128" HorizontalAlignment="Right" BorderBrush="#FF474747" BorderThickness="4" CornerRadius="2" />
+        <Border Background="{Binding FinalColor}"  Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" Width="128" Height="128" HorizontalAlignment="Right" BorderBrush="#FF474747" BorderThickness="4" CornerRadius="2" />
 
-        <ListBox ItemsSource="{Binding Images.Value}" Grid.Row="3" Grid.ColumnSpan="3">
+        <ListBox ItemsSource="{Binding Images}" Grid.Row="3" Grid.ColumnSpan="3">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<UniformGrid />

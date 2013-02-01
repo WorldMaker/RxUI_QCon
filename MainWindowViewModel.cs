@@ -33,21 +33,18 @@ namespace RxUI_QCon
                     (r, g, b) => Tuple.Create(r.Value, g.Value, b.Value))
                 .Select(intsToColor);
 
-            var finalColor = new ObservableAsPropertyHelper<SolidColorBrush>(whenAnyColorChanges
+            var finalColor = this.React("FinalColor", whenAnyColorChanges
                 .Where(x => x != null)
-                .Select(x => new SolidColorBrush(x.Value)),
-                _ => this.OnPropertyChanged("FinalColor"));
-            Dynamic.FinalColor = finalColor;
+                .Select(x => new SolidColorBrush(x.Value)));
 
             Command.Ok = new ReactiveCommand(whenAnyColorChanges.Select(x => x != null));
 
-            Dynamic.Images = new ObservableAsPropertyHelper<List<BitmapImage>>(finalColor
+            this.React("Images", finalColor
                 .Throttle(TimeSpan.FromSeconds(0.7), RxApp.DeferredScheduler)
                 .Select(x => imagesForColor(x.Color))
                 .Switch()
                 .ObserveOn(RxApp.DeferredScheduler)
-                .Select(imageListToImages),
-                _ => this.OnPropertyChanged("Images"));
+                .Select(imageListToImages));
         }
 
         public void Ok(object p)
