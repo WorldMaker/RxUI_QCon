@@ -1,8 +1,12 @@
 ﻿<Window x:Class="RxUI_QCon.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:my="clr-namespace:RxUI_QCon"
         Title="MainWindow" Height="350" Width="525">
-    <Grid Margin="8">
+    <Window.Resources>
+        <my:MainWindowController x:Key="Controller"/>
+    </Window.Resources>
+    <Grid Margin="8" DataContext="{StaticResource Controller}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
@@ -21,13 +25,13 @@
         <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Green:" />
         <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Blue:" />
 
-        <TextBox x:Name="Red" Grid.Row="0" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" Text="0" />
-        <TextBox x:Name="Green" Grid.Row="1" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" Text="0" />
-        <TextBox x:Name="Blue" Grid.Row="2" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" Text="0" />
+        <TextBox Text="{Binding Red}" Grid.Row="0" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Green}" Grid.Row="1" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Blue}" Grid.Row="2" Grid.Column="1" MinWidth="50" Margin="8" VerticalAlignment="Center" />
 
-        <Border x:Name="FinalColor" Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" Width="128" Height="128" HorizontalAlignment="Right" BorderBrush="#FF474747" BorderThickness="4" CornerRadius="2" />
+        <Border Background="{Binding FinalColor.Value}"  Grid.Row="0" Grid.RowSpan="3" Grid.Column="2" Width="128" Height="128" HorizontalAlignment="Right" BorderBrush="#FF474747" BorderThickness="4" CornerRadius="2" />
 
-        <ListBox x:Name="Images" Grid.Row="3" Grid.ColumnSpan="3">
+        <ListBox ItemsSource="{Binding Images.Value}" Grid.Row="3" Grid.ColumnSpan="3">
 			<ListBox.ItemsPanel>
 				<ItemsPanelTemplate>
 					<UniformGrid />
@@ -40,6 +44,6 @@
 			</ListBox.ItemTemplate>
 		</ListBox>
 
-        <Button x:Name="Ok" Grid.Row="4" Grid.Column="2" MinWidth="75" MinHeight="25" Content="Ok" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <Button Command="{Binding Command.Ok}" Grid.Row="4" Grid.Column="2" MinWidth="75" MinHeight="25" Content="Ok" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

@@ -8,7 +8,7 @@ namespace RxUI_QCon.Tests
         [Fact]
         public void ColorShouldChangeWhenValuesChange()
         {
-            var fixture = new MainWindowViewModel();
+            dynamic fixture = new MainWindowController();
 
             fixture.Red = 255;
 
@@ -32,15 +32,16 @@ namespace RxUI_QCon.Tests
         [Fact]
         public void CantHitOkWhenValuesAreBogus()
         {
-            var fixture = new MainWindowViewModel() {Red = 0, Blue = 0, Green = 0,};
+            dynamic New = ImpromptuInterface.Dynamic.Builder.New<MainWindowController>();
+            dynamic fixture = New.Test(Red: 0, Green: 0, Blue: 0);
 
-            Assert.True(fixture.Ok.CanExecute(null));
+            Assert.True(fixture.Command.Ok.CanExecute(null));
 
             fixture.Red = -4;
-            Assert.False(fixture.Ok.CanExecute(null));
+            Assert.False(fixture.Command.Ok.CanExecute(null));
 
             fixture.Red = 128;
-            Assert.True(fixture.Ok.CanExecute(null));
+            Assert.True(fixture.Command.Ok.CanExecute(null));
         }
     }
 }

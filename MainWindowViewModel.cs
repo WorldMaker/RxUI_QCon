@@ -10,64 +10,49 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Xaml;
-using Newtonsoft.Json;
+using ReflexUX;
 
 namespace RxUI_QCon
 {
-    public class MainWindowViewModel : ReactiveObject
+    public interface IMainWindowViewModel
     {
-        int _Red;
-        public int Red {
-            get { return _Red; }
-            set { this.RaiseAndSetIfChanged(value); }
-        }
+        int Red { get; set; }
+        int Green { get; set; }
+        int Blue { get; set; }
+    }
 
-        int _Green;
-        public int Green {
-            get { return _Green; }
-            set { this.RaiseAndSetIfChanged(value); }
-        }
-
-        int _Blue;
-        public int Blue {
-            get { return _Blue; }
-            set { this.RaiseAndSetIfChanged(value); }
-        }
-
-        ObservableAsPropertyHelper<SolidColorBrush> _FinalColor;
-        public SolidColorBrush FinalColor {
-            get { return _FinalColor.Value; }
-        }
-
-        ObservableAsPropertyHelper<List<BitmapImage>> _Images;
-        public List<BitmapImage> Images {
-            get { return _Images.Value; }
-        }
-
-        public ReactiveCommand Ok { get; protected set; }
-
-        public MainWindowViewModel()
+    public class MainWindowController : Reflex<IMainWindowViewModel>
+    {
+        public MainWindowController()
+            : base()
         {
-            var whenAnyColorChanges = this.WhenAny(x => x.Red, x => x.Green, x => x.Blue,
+            var whenAnyColorChanges = this.Contract.WhenAny(x => x.Red, x => x.Green, x => x.Blue,
                     (r, g, b) => Tuple.Create(r.Value, g.Value, b.Value))
                 .Select(intsToColor);
 
-            whenAnyColorChanges
+            var finalColor = whenAnyColorChanges
                 .Where(x => x != null)
-                .Select(x => new SolidColorBrush(x.Value))
-                .ToProperty(this, x => x.FinalColor);
+                .Select(x => new SolidColorBrush(x.Value));
 
-            Ok = new ReactiveCommand(whenAnyColorChanges.Select(x => x != null));
+            Dynamic.FinalColor = new ObservableAsPropertyHelper<SolidColorBrush>(finalColor, _ => this.OnPropertyChanged("FinalColor"));
 
-            this.WhenAny(x => x.FinalColor, x => x.Value)
+            Command.Ok = new ReactiveCommand(whenAnyColorChanges.Select(x => x != null));
+
+            Dynamic.Images = new ObservableAsPropertyHelper<List<BitmapImage>>(finalColor
                 .Throttle(TimeSpan.FromSeconds(0.7), RxApp.DeferredScheduler)
                 .Select(x => imagesForColor(x.Color))
                 .Switch()
                 .ObserveOn(RxApp.DeferredScheduler)
-                .Select(imageListToImages)
-                .ToProperty(this, x => x.Images);
+                .Select(imageListToImages),
+                _ => this.OnPropertyChanged("Images"));
+        }
+
+        public void Ok(object p)
+        {
+            System.Windows.MessageBox.Show("Got it.");
         }
 
         Color? intsToColor(Tuple<int, int, int> colorsAsInts)
