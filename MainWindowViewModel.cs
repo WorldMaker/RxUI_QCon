@@ -33,11 +33,11 @@ namespace RxUI_QCon
                     (r, g, b) => Tuple.Create(r.Value, g.Value, b.Value))
                 .Select(intsToColor);
 
-            var finalColor = whenAnyColorChanges
+            var finalColor = new ObservableAsPropertyHelper<SolidColorBrush>(whenAnyColorChanges
                 .Where(x => x != null)
-                .Select(x => new SolidColorBrush(x.Value));
-
-            Dynamic.FinalColor = new ObservableAsPropertyHelper<SolidColorBrush>(finalColor, _ => this.OnPropertyChanged("FinalColor"));
+                .Select(x => new SolidColorBrush(x.Value)),
+                _ => this.OnPropertyChanged("FinalColor"));
+            Dynamic.FinalColor = finalColor;
 
             Command.Ok = new ReactiveCommand(whenAnyColorChanges.Select(x => x != null));
 
