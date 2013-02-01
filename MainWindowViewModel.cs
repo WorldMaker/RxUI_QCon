@@ -29,7 +29,7 @@ namespace RxUI_QCon
         public MainWindowController()
             : base()
         {
-            var whenAnyColorChanges = this.Contract.WhenAny(x => x.Red, x => x.Green, x => x.Blue,
+            var whenAnyColorChanges = Proxy.WhenAny(x => x.Red, x => x.Green, x => x.Blue,
                     (r, g, b) => Tuple.Create(r.Value, g.Value, b.Value))
                 .Select(intsToColor);
 
