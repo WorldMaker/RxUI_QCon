@@ -49,7 +49,8 @@ namespace RxUI_QCon
 
         public void Ok(object p)
         {
-            System.Windows.MessageBox.Show("Got it.");
+            var progress = new ProgressWindow();
+            progress.Show();
         }
 
         Color? intsToColor(Tuple<int, int, int> colorsAsInts)
