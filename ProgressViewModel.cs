@@ -23,10 +23,11 @@ namespace RxUI_QCon
         {
             Proxy.ItemsFinished = 0;
             Proxy.Total = 0;
-            var progress = Proxy.WhenAny(x => x.ItemsFinished, x => x.Total, (items, total) => items.Value / Math.Max(1.0, total.Value));
-            var percent = React("Percent", progress);
-            var eta = ((IReactiveCommand)CommandAsync.Start).Timestamp().CombineLatest(percent.Sample(TimeSpan.FromSeconds(0.1)).Timestamp(),
-                (start, p) => TimeSpan.FromMilliseconds((1.0 - p.Value) * (p.Timestamp - start.Timestamp).TotalMilliseconds));
+            var progress = Proxy.WhenAny(x => x.ItemsFinished, x => x.Total, (items, total) => new { Items = items.Value, Total = Math.Max(1.0, total.Value), });
+            var percent = progress.Select(tu => tu.Items / tu.Total);
+            React("Percent", percent);
+            var eta = ((IReactiveCommand)CommandAsync.Start).Timestamp().CombineLatest(progress.Sample(TimeSpan.FromSeconds(0.1)).Timestamp(),
+                (start, tu) => TimeSpan.FromMilliseconds((tu.Value.Total - tu.Value.Items) * ((tu.Timestamp - start.Timestamp).TotalMilliseconds / Math.Max(1.0, tu.Value.Items))));
             React("ETA", eta);
         }
 
