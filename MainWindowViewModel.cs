@@ -40,10 +40,10 @@ namespace RxUI_QCon
             Command.Ok = new ReactiveCommand(whenAnyColorChanges.Select(x => x != null));
 
             this.React("Images", finalColor
-                .Throttle(TimeSpan.FromSeconds(0.7), RxApp.DeferredScheduler)
+                .Throttle(TimeSpan.FromSeconds(0.7), RxApp.MainThreadScheduler)
                 .Select(x => imagesForColor(x.Color))
                 .Switch()
-                .ObserveOn(RxApp.DeferredScheduler)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(imageListToImages));
         }
 
